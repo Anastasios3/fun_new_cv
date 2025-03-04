@@ -152,8 +152,3 @@ For users who prefer reduced motion, the CSS includes media queries that respect
 This interactive portfolio website provides a professional yet visually engaging platform to showcase your skills and experience. By following the customization guidelines, you can transform it to reflect your personal brand while maintaining the sophisticated interactions and animations that make it stand out. Whether you're a developer looking to demonstrate your front-end skills or a professional from another field seeking an impressive online presence, this project offers a solid foundation that can be adapted to your specific needs.
 
 The clean separation of content (HTML), presentation (CSS), and behavior (JavaScript) makes ongoing maintenance and updates straightforward. As you grow professionally, you can easily add new projects, skills, and experiences to keep your portfolio current and relevant.
-
-Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/22008213/674818fd-560d-4023-a174-c9bb386f40af/styles.css
-[2] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/22008213/40d3df7a-0beb-42f9-9cbe-c323215aa101/index.html
-[3] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/22008213/167c931d-3e87-4fd1-98e5-f475daa12a53/script.js
