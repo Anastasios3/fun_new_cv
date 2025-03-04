@@ -25,8 +25,8 @@ This project requires only a modern web browser and a text editor or IDE. No bui
 First, clone the repository to your local machine using Git. If you prefer not to use Git, you can download the project as a ZIP file directly from GitHub and extract it to your desired location. Once you have the files locally, no additional installation steps are required – the project is ready to run immediately.
 
 ```
-git clone https://github.com/yourusername/portfolio-website.git
-cd portfolio-website
+git clone https://github.com/Anastasios3/fun_new_cv.git
+cd fun_new_cv
 ```
 
 Once cloned, you can open the project in your preferred code editor. The main files to be aware of include `index.html` (the main content structure), `styles.css` (all styling rules), and `script.js` (interactive elements and animations). To view the site locally, simply open the `index.html` file in your web browser.
