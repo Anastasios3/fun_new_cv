@@ -1311,3 +1311,105 @@ h1.animated-text span:nth-child(20) {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--highlight-color);
 }
+
+/* Add these styles to your existing CSS file or add as a separate file */
+
+/* Fix for section visibility issues */
+section {
+  opacity: 1 !important; /* Override any potential JS issues */
+  transform: translateY(
+    0
+  ) !important; /* Ensure sections are visible by default */
+  filter: blur(0) !important; /* Remove any blur */
+  transition: transform 0.5s ease, box-shadow 0.5s ease !important; /* Simplify transitions */
+}
+
+/* Add a quick fade-in for sections on page load */
+@keyframes sectionFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply to all sections except first one which already has 'revealed' class */
+section:not(.revealed) {
+  animation: sectionFadeIn 0.8s forwards;
+  animation-delay: calc(var(--section-index, 0) * 0.1s);
+}
+
+/* Fix for glass morphism to ensure it's visible */
+.glass-morphism {
+  background: var(--secondary-color) !important;
+  border: var(--border-thickness) solid var(--accent-color);
+  box-shadow: var(--box-shadow) !important;
+}
+
+/* Ensure text is always visible */
+p,
+h1,
+h2,
+h3,
+li,
+.subtitle,
+.location,
+.contact-brief {
+  opacity: 1 !important;
+  color: var(--text-color) !important;
+}
+
+/* Fix for animated text if it doesn't display properly */
+.text-animation-wrapper span {
+  opacity: 1 !important;
+}
+
+/* Improve parallax behavior to be more subtle and reliable */
+@media (prefers-reduced-motion) {
+  section,
+  .glass-morphism {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  body::before {
+    background-position: 0 0 !important;
+    transition: none !important;
+  }
+}
+
+/* Enhance contrasts for better readability */
+:root {
+  --text-color: #ffffff;
+  --muted-text: #cccccc;
+}
+
+/* Set distinct section indices for staggered animations */
+section:nth-child(1) {
+  --section-index: 1;
+}
+section:nth-child(2) {
+  --section-index: 2;
+}
+section:nth-child(3) {
+  --section-index: 3;
+}
+section:nth-child(4) {
+  --section-index: 4;
+}
+section:nth-child(5) {
+  --section-index: 5;
+}
+section:nth-child(6) {
+  --section-index: 6;
+}
+section:nth-child(7) {
+  --section-index: 7;
+}
+section:nth-child(8) {
+  --section-index: 8;
+}

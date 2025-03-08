@@ -17,13 +17,24 @@ document.addEventListener("DOMContentLoaded", function () {
     scrollAnimationThreshold: 0.15,
   };
 
+  // Add a failsafe to ensure sections become visible
+  // This will make all sections visible after a delay regardless of other animations
+  setTimeout(() => {
+    sections.forEach((section) => {
+      section.classList.add("revealed");
+      section.style.opacity = "1";
+      section.style.filter = "blur(0)";
+      section.style.transform = "translateY(0)";
+    });
+  }, 1000);
+
   // Initialize custom cursor
   initCustomCursor();
 
   // Enhanced animated text for h1
   createTextAnimation(h1);
 
-  // Add 3D tilt effect to sections
+  // Add 3D tilt effect to sections (with reduced intensity for better reliability)
   addTiltEffect(sections);
 
   // Create particle background
@@ -32,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Implement smooth scrolling
   implementSmoothScrolling();
 
-  // Add scroll-based animations
+  // Add scroll-based animations (fixed version)
   addScrollAnimations();
 
   // Add hover effects for timeline
@@ -56,11 +67,13 @@ document.addEventListener("DOMContentLoaded", function () {
   // Add theme toggle functionality
   addThemeToggle();
 
-  // Add section reveal animations
+  // Add section reveal animations (fixed version)
   addSectionRevealAnimations();
 
   // Advanced text animations
   function createTextAnimation(element) {
+    if (!element) return; // Guard clause to prevent errors
+
     const text = element.textContent;
     element.textContent = "";
 
@@ -86,6 +99,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Custom cursor implementation
   function initCustomCursor() {
     const cursorDot = document.querySelector(".cursor-dot");
+    if (!cursorDot) return; // Guard clause to prevent errors
+
     let mouseX = 0,
       mouseY = 0;
     let cursorX = 0,
@@ -160,8 +175,10 @@ document.addEventListener("DOMContentLoaded", function () {
     updateCursor();
   }
 
-  // Enhanced parallax effect with depth
+  // Enhanced parallax effect with depth - REDUCED INTENSITY
   function addTiltEffect(elements) {
+    if (!elements || elements.length === 0) return; // Guard clause
+
     let prevMouseX = 0,
       prevMouseY = 0;
 
@@ -183,25 +200,31 @@ document.addEventListener("DOMContentLoaded", function () {
             window.innerHeight;
           const depthFactor = 1 - distanceFromCenter * 0.8;
 
-          // Apply 3D transform with depth
+          // Apply 3D transform with depth - REDUCED INTENSITY (divided by 2)
           section.style.transform = `
             perspective(1000px)
-            rotateY(${prevMouseX * config.rotationStrength * depthFactor}deg)
-            rotateX(${-prevMouseY * config.rotationStrength * depthFactor}deg)
-            translateZ(${10 * depthFactor}px)
+            rotateY(${
+              prevMouseX * (config.rotationStrength / 2) * depthFactor
+            }deg)
+            rotateX(${
+              -prevMouseY * (config.rotationStrength / 2) * depthFactor
+            }deg)
+            translateZ(${5 * depthFactor}px)
           `;
 
           // Add subtle shadow based on tilt
           section.style.boxShadow = `
-            ${prevMouseX * 20}px ${prevMouseY * 20}px 20px rgba(0,0,0,0.1),
+            ${prevMouseX * 10}px ${prevMouseY * 10}px 20px rgba(0,0,0,0.1),
             var(--box-shadow)
           `;
         }
       });
 
       // Apply subtle parallax to header background
-      header.style.backgroundPositionX = `${prevMouseX * 30}px`;
-      header.style.backgroundPositionY = `${prevMouseY * 30}px`;
+      if (header) {
+        header.style.backgroundPositionX = `${prevMouseX * 15}px`;
+        header.style.backgroundPositionY = `${prevMouseY * 15}px`;
+      }
     });
 
     // Reset on touch devices
@@ -213,9 +236,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Particle effect background
+  // Particle effect background - REDUCED COUNT
   function createParticleEffect() {
-    for (let i = 0; i < config.particleCount; i++) {
+    // Reduced particles to improve performance
+    const particleCount = Math.min(config.particleCount, 15);
+
+    for (let i = 0; i < particleCount; i++) {
       setTimeout(() => {
         createParticle();
       }, i * 300);
@@ -294,12 +320,27 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Enhanced scroll-based animations
+  // FIXED: Enhanced scroll-based animations
   function addScrollAnimations() {
+    // Make sure sections are visible by default
+    sections.forEach((section) => {
+      if (!section.classList.contains("revealed")) {
+        section.style.opacity = "0.1"; // Start with slight visibility
+      }
+    });
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            // Make section fully visible
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
+            entry.target.style.filter = "blur(0)";
+
+            // Add revealed class for CSS transitions
+            entry.target.classList.add("revealed");
+
             // Staggered animation for children
             const children = entry.target.children;
             Array.from(children).forEach((child, index) => {
@@ -312,18 +353,16 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       },
       {
-        threshold: config.scrollAnimationThreshold,
-        rootMargin: "0px 0px -100px 0px",
+        threshold: 0.1, // Lower threshold to trigger earlier
+        rootMargin: "0px 0px -50px 0px", // Adjusted rootMargin
       }
     );
 
     sections.forEach((section) => {
-      section.style.opacity = "0";
-      section.style.transform = "translateY(20px)";
       observer.observe(section);
     });
 
-    // Parallax scrolling effect for sections
+    // Parallax scrolling effect for sections (REDUCED INTENSITY)
     window.addEventListener("scroll", () => {
       const scrollPosition = window.pageYOffset;
 
@@ -335,20 +374,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (rect.top < window.innerHeight && rect.bottom > 0) {
           section.style.transform = `translateY(${
-            distanceFromCenter * 0.05
+            distanceFromCenter * 0.02 // Reduced from 0.05
           }px)`;
         }
       });
 
-      // Parallax for header
-      header.style.backgroundPositionY = `${
-        scrollPosition * config.parallaxStrength
-      }px`;
+      // Parallax for header (REDUCED INTENSITY)
+      if (header) {
+        header.style.backgroundPositionY = `${
+          scrollPosition * (config.parallaxStrength / 2)
+        }px`;
+      }
     });
   }
 
   // Advanced timeline interactions
   function enhanceTimelineInteractions() {
+    if (!timeline || timeline.length === 0) return; // Guard clause
+
     timeline.forEach((item, index) => {
       // Staggered appearance
       item.style.opacity = "0";
@@ -405,8 +448,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const mouseY = e.clientY / window.innerHeight;
 
       // Apply a more complex movement to the grid
-      const offsetX = Math.sin(mouseX * Math.PI * 2) * 15;
-      const offsetY = Math.cos(mouseY * Math.PI * 2) * 15;
+      const offsetX = Math.sin(mouseX * Math.PI * 2) * 10; // Reduced from 15
+      const offsetY = Math.cos(mouseY * Math.PI * 2) * 10; // Reduced from 15
 
       document.body.style.setProperty("--grid-offset-x", `${offsetX}px`);
       document.body.style.setProperty("--grid-offset-y", `${offsetY}px`);
@@ -495,14 +538,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Subtle noise texture
+  // Subtle noise texture - SIMPLIFIED
   function addNoiseTexture() {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-    canvas.width = 200;
-    canvas.height = 200;
 
-    const imageData = ctx.createImageData(200, 200);
+    if (!ctx) return; // Guard clause for unsupported browsers
+
+    canvas.width = 100; // Reduced from 200
+    canvas.height = 100; // Reduced from 200
+
+    const imageData = ctx.createImageData(100, 100);
     const data = imageData.data;
 
     // Create more varied noise pattern
@@ -513,7 +559,7 @@ document.addEventListener("DOMContentLoaded", function () {
       data[i] = noise;
       data[i + 1] = noise;
       data[i + 2] = noise;
-      data[i + 3] = 10; // Very subtle opacity
+      data[i + 3] = 5; // Very subtle opacity, reduced from 10
     }
 
     ctx.putImageData(imageData, 0, 0);
@@ -526,40 +572,40 @@ document.addEventListener("DOMContentLoaded", function () {
   // Typing effect for subtitle
   function addTypingEffect() {
     const subtitle = document.querySelector(".subtitle");
-    if (subtitle) {
-      const originalText = subtitle.textContent;
-      subtitle.textContent = "";
+    if (!subtitle) return; // Guard clause
 
-      // Add cursor element
-      const cursorElement = document.createElement("span");
-      cursorElement.className = "typing-cursor";
-      cursorElement.textContent = "|";
-      cursorElement.style.animation = `blink ${config.cursorBlinkRate}ms infinite`;
+    const originalText = subtitle.textContent;
+    subtitle.textContent = "";
 
-      subtitle.appendChild(cursorElement);
+    // Add cursor element
+    const cursorElement = document.createElement("span");
+    cursorElement.className = "typing-cursor";
+    cursorElement.textContent = "|";
+    cursorElement.style.animation = `blink ${config.cursorBlinkRate}ms infinite`;
 
-      // Type text
-      let index = 0;
+    subtitle.appendChild(cursorElement);
 
-      function typeText() {
-        if (index < originalText.length) {
-          // Create character span
-          const charSpan = document.createElement("span");
-          charSpan.textContent = originalText.charAt(index);
-          subtitle.insertBefore(charSpan, cursorElement);
+    // Type text
+    let index = 0;
 
-          index++;
-          setTimeout(typeText, config.typingSpeed + Math.random() * 50);
-        } else {
-          // Keep cursor blinking
-          setTimeout(() => {
-            cursorElement.style.opacity = "0";
-          }, 2000);
-        }
+    function typeText() {
+      if (index < originalText.length) {
+        // Create character span
+        const charSpan = document.createElement("span");
+        charSpan.textContent = originalText.charAt(index);
+        subtitle.insertBefore(charSpan, cursorElement);
+
+        index++;
+        setTimeout(typeText, config.typingSpeed + Math.random() * 50);
+      } else {
+        // Keep cursor blinking
+        setTimeout(() => {
+          cursorElement.style.opacity = "0";
+        }, 2000);
       }
-
-      setTimeout(typeText, 1000);
     }
+
+    setTimeout(typeText, 1000);
   }
 
   // Add scroll progress indicator
@@ -667,7 +713,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Add section reveal animations with advanced effects
+  // FIXED: Add section reveal animations with advanced effects
   function addSectionRevealAnimations() {
     const revealObserver = new IntersectionObserver(
       (entries) => {
@@ -676,19 +722,33 @@ document.addEventListener("DOMContentLoaded", function () {
             const section = entry.target;
             section.classList.add("revealed");
 
+            // Fix potential transform and opacity conflicts
+            section.style.opacity = "1";
+            section.style.filter = "blur(0)";
+            section.style.transform = "translateY(0)";
+
             // Create staggered animation for section elements
             const animElements = section.querySelectorAll(
               "h2, h3, p, .timeline li, .skill-bar"
             );
-            animElements.forEach((el, index) => {
-              el.style.opacity = "0";
-              el.style.transform = "translateY(20px)";
 
-              setTimeout(() => {
-                el.style.transition = "opacity 0.5s ease, transform 0.5s ease";
-                el.style.opacity = "1";
-                el.style.transform = "translateY(0)";
-              }, 100 + index * 100);
+            animElements.forEach((el, index) => {
+              // Store current opacity/transform
+              const currentOpacity = window.getComputedStyle(el).opacity;
+              const currentTransform = window.getComputedStyle(el).transform;
+
+              // Only animate if element is not already visible
+              if (currentOpacity < 0.5) {
+                el.style.opacity = "0";
+                el.style.transform = "translateY(20px)";
+
+                setTimeout(() => {
+                  el.style.transition =
+                    "opacity 0.5s ease, transform 0.5s ease";
+                  el.style.opacity = "1";
+                  el.style.transform = "translateY(0)";
+                }, 100 + index * 100);
+              }
             });
 
             // Special animation for headings
@@ -725,7 +785,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       },
       {
-        threshold: 0.2,
+        threshold: 0.1, // Reduced from 0.2 to trigger earlier
+        rootMargin: "0px 0px -10% 0px", // Added rootMargin to trigger earlier
       }
     );
 
@@ -825,7 +886,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Create animated background bubbles on scroll
   window.addEventListener("scroll", () => {
-    if (Math.random() < 0.1) {
+    if (Math.random() < 0.05) {
+      // Reduced from 0.1
       const bubble = document.createElement("div");
       bubble.className = "background-bubble";
 
@@ -860,12 +922,22 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("load", () => {
     document.body.classList.add("loaded");
 
+    // Make all sections visible immediately
+    sections.forEach((section) => {
+      section.classList.add("revealed");
+      section.style.opacity = "1";
+      section.style.filter = "blur(0)";
+      section.style.transform = "translateY(0)";
+    });
+
     // Initial scroll position check
     setTimeout(() => {
       const scrollY = window.scrollY;
       if (scrollY === 0) {
         // Subtle bounce animation for header
-        header.style.animation = "bounce 2s ease";
+        if (header) {
+          header.style.animation = "bounce 2s ease";
+        }
       }
     }, 500);
   });
