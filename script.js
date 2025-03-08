@@ -304,18 +304,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const children = entry.target.children;
             Array.from(children).forEach((child, index) => {
               setTimeout(() => {
-                child.classList.add("animated");
+                child.style.opacity = "1";
+                child.style.transform = "translateY(0)";
               }, index * 100);
-            });
-
-            entry.target.classList.add("in-view");
-            entry.target.style.opacity = "1";
-            entry.target.style.transform = "translateY(0)";
-
-            // Trigger any progress bars
-            const progressBars = entry.target.querySelectorAll(".bar-fill");
-            progressBars.forEach((bar) => {
-              bar.style.animationPlayState = "running";
             });
           }
         });
@@ -613,7 +604,6 @@ document.addEventListener("DOMContentLoaded", function () {
       background: var(--primary-color);
       color: var(--accent-color);
       border: 2px solid var(--accent-color);
-      font-size: 20px;
       cursor: pointer;
       z-index: 1000;
       opacity: 0.7;
@@ -830,17 +820,6 @@ document.addEventListener("DOMContentLoaded", function () {
     .animated {
       animation: fadeIn 0.8s forwards;
     }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
   `;
   document.head.appendChild(style);
 
@@ -852,6 +831,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const size = Math.random() * 50 + 20;
       const posX = Math.random() * window.innerWidth;
+      const duration = Math.random() * 15 + 10;
 
       bubble.style.cssText = `
         position: fixed;
@@ -861,6 +841,7 @@ document.addEventListener("DOMContentLoaded", function () {
         height: ${size}px;
         border-radius: 50%;
         border: 2px solid var(--accent-color);
+        border-right-color: var(--highlight-color);
         opacity: 0.1;
         z-index: -2;
         pointer-events: none;
